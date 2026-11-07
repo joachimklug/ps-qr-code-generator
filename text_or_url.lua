@@ -1,10 +1,10 @@
 info = {
     id = "url",
     type = "project.plugin",
-    title = "QR Code Generator - URL",
-    menu = "Generate-QR/URL",
+    title = "QR Code Generator - Text or URL",
+    menu = "Generate-QR/Text or URL",
     params = {
-        { name = "url",            label = "URL",                                 type = "string", default = "https://example.com" },
+        { name = "text",           label = "Text or URL",                         type = "string", default = "https://example.com" },
         { name = "plate_size",     label = "Total QR size including border (mm)", type = "float",  default = 90 },
         { name = "base_height",    label = "Base plate height (mm)",              type = "float",  default = 2 },
         { name = "pattern_height", label = "Raised square height (mm)",           type = "float",  default = 1 },
@@ -12,7 +12,7 @@ info = {
     }
 }
 
-local MAX_URL_BYTES = 1024
+local MAX_TEXT_BYTES = 1024
 
 function execute(opts)
     -- PrusaSlicer provides require when running the plugin, after metadata discovery.
@@ -21,19 +21,19 @@ function execute(opts)
     local qr_geometry = require("qr_geometry")
     local utils = require("utils")
 
-    local url = opts.url
-    if type(url) ~= "string" or url == "" or url:find("[%s%c]") then
-        error("Enter a URL without spaces or control characters.", 0)
+    local text = opts.text
+    if type(text) ~= "string" or text == "" or text:find("%c") then
+        error("Enter text or a URL without control characters.", 0)
     end
-    if #url > MAX_URL_BYTES then
-        error("The URL must be at most " .. MAX_URL_BYTES .. " bytes.", 0)
+    if #text > MAX_TEXT_BYTES then
+        error("The text or URL must be at most " .. MAX_TEXT_BYTES .. " bytes.", 0)
     end
 
     utils.validate_dimensions(opts)
 
-    local ran, encoded, matrix = pcall(encoder.qrcode, url)
+    local ran, encoded, matrix = pcall(encoder.qrcode, text)
     if not ran or not encoded then
-        error("Could not encode the URL as a QR code.", 0)
+        error("Could not encode the text or URL as a QR code.", 0)
     end
 
     local pattern_size = opts.plate_size - opts.border - opts.border

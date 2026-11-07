@@ -4,7 +4,7 @@
 	"version": "1.0.0",
 	"min_slicer_version": "3.0.0-alpha14",
 	"author": "JoeKlug",
-	"description": "Generate a printable QR code from a URL.",
+	"description": "Generate a printable QR code from text or a URL.",
 	"license": "BSD-3-Clause",
 	"required_apis": {
 		"project.plugin": "1.0.0"

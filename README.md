@@ -1,0 +1,30 @@
+# Prusa Slicer QR Code Generator 
+
+A small PrusaSlicer plugin for making QR codes you can 3D print.
+
+PrusaSlicer added Lua plugins in **3.0.0-alpha11** and the in-app Plugin Marketplace in **3.0.0-alpha13**. See the [PrusaSlicer release notes](https://github.com/prusa3d/PrusaSlicer/releases/tag/version_3.0.0-alpha13#plugin-marketplace).
+
+This QR code generator requires **PrusaSlicer 3.0.0-alpha14 or newer**.
+
+## QR types
+
+| Type | Status | What it’s for | Lua file |
+| --- | --- | --- | --- |
+| Text or URL | Available now | Store a note, part number, asset ID, or link | `text_or_url.lua` |
+| vCard | Planned | Share contact details | `vcard.lua` |
+| Wi-Fi (WLAN) | Planned | Help guests join a Wi-Fi network | `wlan.lua` |
+| Location | Idea | Share a map pin | `geo.lua` |
+| Email | Idea | Start an email with a recipient and optional subject | `email.lua` |
+| Phone | Idea | Open the dialer with a number filled in | `phone.lua` |
+| SMS | Idea | Start a text message to a number | `sms.lua` |
+| Calendar event | Idea | Share event details someone can add to a calendar | `event.lua` |
+
+Open **Generate-QR → Text or URL** in PrusaSlicer, enter a line of text or paste a link, and adjust the plate size, border, and height of the raised pattern.
+
+## How it’s organized
+
+Each QR command has a Lua file for its inputs and the data it encodes. The commands share `qrencode.lua` for encoding, `qr_geometry.lua` for building the raised pattern, and `utils.lua` for checking dimensions.
+
+## Support the project
+
+If you find it handy, give the repo a star. Got an idea for another QR type or found a bug? Open an issue. Pull requests are welcome, too.
