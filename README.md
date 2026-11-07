@@ -1,6 +1,6 @@
 # QR Code Generator for PrusaSlicer
 
-Create 3D-printable QR codes directly in PrusaSlicer. Customize the plate size, border width, base thickness, and height of the raised QR pattern.
+Create 3D-printable QR codes for text, links, and Wi-Fi directly in PrusaSlicer. Customize the plate size, border width, base thickness, and height of the raised QR pattern.
 
 ![Generated QR code on the build plate in PrusaSlicer](assets/qr-example.png)
 
@@ -13,8 +13,8 @@ This QR code generator requires **PrusaSlicer 3.0.0-alpha14 or newer**.
 | Type | Status | What it’s for | Lua file |
 | --- | --- | --- | --- |
 | Text or URL | Available now | Store a note, part number, asset ID, or link | `text_or_url.lua` |
+| Wi-Fi (WLAN) | Available now | Help guests join a Wi-Fi network | `wlan.lua` |
 | vCard | Planned | Share contact details | `vcard.lua` |
-| Wi-Fi (WLAN) | Planned | Help guests join a Wi-Fi network | `wlan.lua` |
 | Location | Idea | Share a map pin | `geo.lua` |
 | Email | Idea | Start an email with a recipient and optional subject | `email.lua` |
 | Phone | Idea | Open the dialer with a number filled in | `phone.lua` |
@@ -23,9 +23,15 @@ This QR code generator requires **PrusaSlicer 3.0.0-alpha14 or newer**.
 
 Open **Generate-QR → Text or URL** in PrusaSlicer, enter a line of text or paste a link, and adjust the plate size, border, and height of the raised pattern.
 
+### Wi-Fi
+
+Open **Generate-QR → Wi-Fi** and enter the exact network name (SSID). Choose **WPA/WPA2 Personal**, **WPA3 Personal**, **WEP**, or **Open**, and enter the network password for a secured network. Check **Hidden network** if your router does not broadcast the SSID. Scanner support for WPA3 and WEP varies by device.
+
+The QR code contains the network credentials in readable form. Anyone with the model or print can scan it to retrieve the password.
+
 ## How it’s organized
 
-Each QR command has a Lua file for its inputs and the data it encodes. The commands share `qrencode.lua` for encoding, `qr_geometry.lua` for building the raised pattern, and `utils.lua` for checking dimensions.
+Each QR command has a Lua file at the bundle root for its inputs and the data it encodes. The shared code lives in `lib/`. The commands use `lib/qr_plate.lua` to build the plate with `lib/qrencode.lua` for encoding, `lib/qr_geometry.lua` for the raised pattern, and `lib/utils.lua` for dimension checks.
 
 ## VS Code setup
 
