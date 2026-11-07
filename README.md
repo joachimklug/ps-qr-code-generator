@@ -1,6 +1,6 @@
-# Prusa Slicer QR Code Generator 
+# QR Code Generator for PrusaSlicer
 
-A small PrusaSlicer plugin for making QR codes you can 3D print.
+Create 3D-printable QR codes directly in PrusaSlicer. Customize the plate size, border width, base thickness, and height of the raised QR pattern.
 
 PrusaSlicer added Lua plugins in **3.0.0-alpha11** and the in-app Plugin Marketplace in **3.0.0-alpha13**. See the [PrusaSlicer release notes](https://github.com/prusa3d/PrusaSlicer/releases/tag/version_3.0.0-alpha13#plugin-marketplace).
 
