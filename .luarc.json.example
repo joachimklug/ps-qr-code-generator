@@ -1,0 +1,5 @@
+{
+  "workspace.library": [
+    "/absolute/path/to/prusa-slicer-lua-api-stubs-1.0.0"
+  ]
+}
