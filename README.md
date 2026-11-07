@@ -6,7 +6,7 @@ Create 3D-printable QR codes for text, links, and Wi-Fi directly in PrusaSlicer.
 
 PrusaSlicer added Lua plugins in **3.0.0-alpha11** and the in-app Plugin Marketplace in **3.0.0-alpha13**. See the [PrusaSlicer release notes](https://github.com/prusa3d/PrusaSlicer/releases/tag/version_3.0.0-alpha13#plugin-marketplace).
 
-This QR code generator requires **PrusaSlicer 3.0.0-alpha14 or newer**.
+This QR code generator requires **PrusaSlicer 3.0.0-alpha13 or newer**.
 
 ## QR types
 
