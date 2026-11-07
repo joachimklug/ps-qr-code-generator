@@ -1,0 +1,27 @@
+name: Publish to Plugin Marketplace
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Stage plugin bundle
+        run: |
+          mkdir -p "$RUNNER_TEMP/plugin-bundle"
+          cp manifest.json LICENSE qr_geometry.lua qrencode.lua text_or_url.lua utils.lua \
+            "$RUNNER_TEMP/plugin-bundle/"
+
+      - uses: prusa3d/plugin-marketplace-publish@v1
+        with:
+          path: ${{ runner.temp }}/plugin-bundle
+          private-key: ${{ secrets.PRUSA_SLICER_PLUGIN_MARKETPLACE_SIGNING_KEY }}

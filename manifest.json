@@ -3,7 +3,7 @@
 	"name": "PS-QRCodeGenerator",
 	"version": "1.0.0",
 	"min_slicer_version": "3.0.0-alpha14",
-	"author": "JoeKlug",
+	"author": "85b16e87-ae7b-4347-9a45-46af0dee27fa",
 	"description": "Generate a printable QR code from text or a URL.",
 	"license": "BSD-3-Clause",
 	"required_apis": {
