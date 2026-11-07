@@ -4,7 +4,7 @@
 	"version": "1.1.0",
 	"min_slicer_version": "3.0.0-alpha13",
 	"author": "85b16e87-ae7b-4347-9a45-46af0dee27fa",
-	"description": "Create 3D-printable QR codes for text, links, and Wi-Fi directly in PrusaSlicer. Customize the QR pattern size, border on each side, base thickness, and height of the raised QR pattern.",
+	"description": "Create 3D-printable QR codes for text, links, Wi-Fi, and contacts directly in PrusaSlicer. Customize the QR pattern size, border on each side, base thickness, and height of the raised QR pattern.",
 	"license": "BSD-3-Clause",
 	"required_apis": {
 		"project.plugin": "1.0.0"

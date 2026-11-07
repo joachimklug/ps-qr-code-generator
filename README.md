@@ -1,6 +1,6 @@
 # QR Code Generator for PrusaSlicer
 
-Create 3D-printable QR codes for text, links, and Wi-Fi directly in PrusaSlicer. Customize the QR pattern size, border on each side, base thickness, and height of the raised QR pattern.
+Create 3D-printable QR codes for text, links, Wi-Fi, and contacts directly in PrusaSlicer. Customize the QR pattern size, border on each side, base thickness, and height of the raised QR pattern.
 
 ![Generated QR code on the build plate in PrusaSlicer](assets/qr-example.png)
 
@@ -14,7 +14,7 @@ This QR code generator requires **PrusaSlicer 3.0.0-alpha13 or newer**.
 | --- | --- | --- | --- |
 | [Text or URL](docs/url.md) | Available now | Store a note, part number, asset ID, or link | `text_or_url.lua` |
 | [Wi-Fi (WLAN)](docs/wifi.md) | Available now | Help guests join a Wi-Fi network | `wlan.lua` |
-| vCard | Planned | Share contact details | `vcard.lua` |
+| [vCard](docs/vcard.md) | Available now | Share contact details | `vcard.lua` |
 | Location | Idea | Share a map pin | `geo.lua` |
 | Email | Idea | Start an email with a recipient and optional subject | `email.lua` |
 | Phone | Idea | Open the dialer with a number filled in | `phone.lua` |
@@ -23,7 +23,7 @@ This QR code generator requires **PrusaSlicer 3.0.0-alpha13 or newer**.
 
 ## Pattern size and borders
 
-**QR pattern size (mm)** sets the side length of the square QR pattern. Both commands default to an 80 mm pattern with 5 mm borders, producing a 90 × 90 mm plate.
+**QR pattern size (mm)** sets the side length of the square QR pattern. All generators default to an 80 mm pattern with 5 mm borders, producing a 90 × 90 mm plate.
 
 In **Border**, enter one value in millimeters, such as `5`, for all sides. For different borders, enter four comma-separated values in **top, right, bottom, left** order. With the default pattern size, `5, 5, 25, 5` gives a 90 × 110 mm plate with extra room below the code. Use zero or positive values and a decimal point for fractions such as `2.5`.
 

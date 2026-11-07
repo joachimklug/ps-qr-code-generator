@@ -18,7 +18,7 @@ jobs:
       - name: Stage plugin bundle
         run: |
           mkdir -p "$RUNNER_TEMP/plugin-bundle/lib"
-          cp manifest.json LICENSE text_or_url.lua wlan.lua "$RUNNER_TEMP/plugin-bundle/"
+          cp manifest.json LICENSE text_or_url.lua wlan.lua vcard.lua "$RUNNER_TEMP/plugin-bundle/"
           cp lib/qr_geometry.lua lib/qr_plate.lua lib/qrencode.lua lib/utils.lua "$RUNNER_TEMP/plugin-bundle/lib/"
 
       - uses: prusa3d/plugin-marketplace-publish@v1
