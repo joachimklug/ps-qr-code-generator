@@ -4,11 +4,16 @@ info = {
     title = "QR Code Generator - Text or URL",
     menu = "Generate-QR/Text or URL",
     params = {
-        { name = "text",           label = "Text or URL",                         type = "string", default = "https://example.com" },
-        { name = "plate_size",     label = "Total QR size including border (mm)", type = "float",  default = 90 },
-        { name = "base_height",    label = "Base plate height (mm)",              type = "float",  default = 2 },
-        { name = "pattern_height", label = "Raised square height (mm)",           type = "float",  default = 1 },
-        { name = "border",         label = "Border width per side (mm)",          type = "float",  default = 5 }
+        { name = "text",    label = "Text or URL",          type = "string", default = "https://example.com" },
+        { name = "qr_size", label = "QR pattern size (mm)", type = "float",  default = 80 },
+        {
+            name = "border",
+            label = "Border (top, right, bottom, left)",
+            type = "string",
+            default = "5"
+        },
+        { name = "base_height",    label = "Base plate height (mm)",    type = "float", default = 2 },
+        { name = "pattern_height", label = "Raised square height (mm)", type = "float", default = 1 }
     }
 }
 

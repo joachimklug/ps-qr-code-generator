@@ -4,19 +4,24 @@ info = {
     title = "QR Code Generator - Wi-Fi",
     menu = "Generate-QR/Wi-Fi",
     params = {
-        { name = "ssid",           label = "Network name (SSID)",                   type = "string", default = "" },
+        { name = "ssid",     label = "Network name (SSID)",                   type = "string", default = "" },
         {
             name = "security",
             label = "Security",
             type = "combobox",
             allowed_values = { "WPA/WPA2 Personal", "WPA3 Personal", "WEP", "Open" }
         },
-        { name = "password",       label = "Wi-Fi password (leave blank for Open)", type = "string", default = "" },
-        { name = "hidden",         label = "Hidden network",                        type = "bool",   default = false },
-        { name = "plate_size",     label = "Total QR size including border (mm)",   type = "float",  default = 90 },
-        { name = "base_height",    label = "Base plate height (mm)",                type = "float",  default = 2 },
-        { name = "pattern_height", label = "Raised square height (mm)",             type = "float",  default = 1 },
-        { name = "border",         label = "Border width per side (mm)",            type = "float",  default = 15 }
+        { name = "password", label = "Wi-Fi password (leave blank for Open)", type = "string", default = "" },
+        { name = "hidden",   label = "Hidden network",                        type = "bool",   default = false },
+        { name = "qr_size",  label = "QR pattern size (mm)",                  type = "float",  default = 80 },
+        {
+            name = "border",
+            label = "Border (top, right, bottom, left)",
+            type = "string",
+            default = "5"
+        },
+        { name = "base_height",    label = "Base plate height (mm)",    type = "float", default = 2 },
+        { name = "pattern_height", label = "Raised square height (mm)", type = "float", default = 1 }
     }
 }
 

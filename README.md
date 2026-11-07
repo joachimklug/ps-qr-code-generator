@@ -1,6 +1,6 @@
 # QR Code Generator for PrusaSlicer
 
-Create 3D-printable QR codes for text, links, and Wi-Fi directly in PrusaSlicer. Customize the plate size, border width, base thickness, and height of the raised QR pattern.
+Create 3D-printable QR codes for text, links, and Wi-Fi directly in PrusaSlicer. Customize the QR pattern size, border on each side, base thickness, and height of the raised QR pattern.
 
 ![Generated QR code on the build plate in PrusaSlicer](assets/qr-example.png)
 
@@ -21,13 +21,21 @@ This QR code generator requires **PrusaSlicer 3.0.0-alpha13 or newer**.
 | SMS | Idea | Start a text message to a number | `sms.lua` |
 | Calendar event | Idea | Share event details someone can add to a calendar | `event.lua` |
 
-Open **Generate-QR → Text or URL** in PrusaSlicer, enter a line of text or paste a link, and adjust the plate size, border, and height of the raised pattern.
+Open **Generate-QR → Text or URL** in PrusaSlicer and enter a line of text or paste a link.
 
 ### Wi-Fi
 
 Open **Generate-QR → Wi-Fi** and enter the exact network name (SSID). Choose **WPA/WPA2 Personal**, **WPA3 Personal**, **WEP**, or **Open**, and enter the network password for a secured network. Check **Hidden network** if your router does not broadcast the SSID. Scanner support for WPA3 and WEP varies by device.
 
 The QR code contains the network credentials in readable form. Anyone with the model or print can scan it to retrieve the password.
+
+## Pattern size and borders
+
+**QR pattern size (mm)** sets the side length of the square QR pattern. Both commands default to an 80 mm pattern with 5 mm borders, producing a 90 × 90 mm plate.
+
+In **Border**, enter one value in millimeters, such as `5`, for all sides. For different borders, enter four comma-separated values in **top, right, bottom, left** order. With the default pattern size, `5, 5, 25, 5` gives a 90 × 110 mm plate with extra room below the code. Use zero or positive values and a decimal point for fractions such as `2.5`.
+
+If you add text or graphics, leave at least four QR modules of clear space on each side of the pattern. [DENSO WAVE's QR margin guidance](https://www.qrcode.com/en/howto/code.html)
 
 ## How it’s organized
 
