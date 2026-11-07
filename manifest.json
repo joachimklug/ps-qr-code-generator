@@ -1,0 +1,12 @@
+{
+	"id": "io.github.joachimklug.ps-qr-code-generator",
+	"name": "PS-QRCodeGenerator",
+	"version": "1.0.0",
+	"min_slicer_version": "3.0.0-alpha14",
+	"author": "JoeKlug",
+	"description": "A plugin description",
+	"license": "BSD-3-Clause",
+	"required_apis": {
+		"project.plugin": "1.0.0"
+	}
+}
