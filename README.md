@@ -29,6 +29,12 @@ In **Border**, enter one value in millimeters, such as `5`, for all sides. For d
 
 If you add text or graphics, leave at least four QR modules of clear space on each side of the pattern.
 
+### Model limits
+
+The finished model can measure up to 1,000 mm along each axis, including the borders and both heights. The base and raised heights must each be at least 0.01 mm, as must the width of each QR module. The minimum pattern size increases as the QR grid gets denser.
+
+The border field accepts up to 256 bytes. The raised pattern can contain up to 900 model parts. If your QR code exceeds that limit, shorten its contents. Generate dense QR codes in an empty project because PrusaSlicer also counts parts from existing objects toward its scene limit.
+
 ## How it’s organized
 
 Each QR command has a Lua file at the bundle root for its inputs and the data it encodes. The shared code lives in `lib/`. The commands use `lib/qr_plate.lua` to build the plate with `lib/qrencode.lua` for encoding, `lib/qr_geometry.lua` for the raised pattern, and `lib/utils.lua` for dimension checks.

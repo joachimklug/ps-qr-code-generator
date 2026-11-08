@@ -20,10 +20,10 @@ Create a 3D-printable QR code that stores contact details in vCard 3.0 format. A
 | **Phone number** | The contact’s telephone number. | Digits with an optional leading `+`. Spaces, parentheses, periods, and hyphens are allowed. For example, `+1 202 555 0148`. Leave blank to omit it. | Blank |
 | **Email address** | The contact’s email address. | An address such as `name@example.com` with one `@` and no spaces or angle brackets, or blank. | Blank |
 | **Website URL** | The website associated with the contact. | A full address starting with `http://` or `https://`, such as `https://example.com`, or blank. | Blank |
-| **QR pattern size (mm)** | The side length of the square QR pattern, excluding the borders. | Any finite number greater than zero. Decimals are allowed. | `80` |
+| **QR pattern size (mm)** | The side length of the square QR pattern, excluding the borders. | At least 0.01 mm per QR module. See the [model limits](../README.md#model-limits). | `80` |
 | **Border (top, right, bottom, left)** | The distance in millimeters from the pattern to each edge of the plate. | Enter `5` for 5 mm on every side, or enter four comma-separated values in **top, right, bottom, left** order. For example, `5, 5, 25, 5` gives 25 mm below the code and 5 mm on the other sides. Use nonnegative numbers and a decimal point for fractions. | `5` |
-| **Base plate height (mm)** | The thickness of the plate beneath the pattern. | Any finite number greater than zero. Decimals are allowed. | `2` |
-| **Raised square height (mm)** | How far the QR squares rise above the plate. | Any finite number greater than zero. Decimals are allowed. | `1` |
+| **Base plate height (mm)** | The thickness of the plate beneath the pattern. | At least 0.01 mm. | `2` |
+| **Raised square height (mm)** | How far the QR squares rise above the plate. | At least 0.01 mm. Both heights together can be at most 1,000 mm. | `1` |
 
 Contact fields cannot contain control characters such as tabs or line breaks. The complete encoded vCard can be at most 1,024 bytes, including formatting. Some characters, such as accented letters, take up more than one byte.
 

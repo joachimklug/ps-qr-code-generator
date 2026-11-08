@@ -1,3 +1,7 @@
+local MIN_FEATURE_SIZE = 0.01
+local MAX_MODEL_SIZE = 1000
+local MAX_BORDER_BYTES = 256
+
 local function is_finite_positive_number(value)
     return type(value) == "number" and value > 0 and value < math.huge
 end
@@ -7,6 +11,10 @@ local BORDER_INPUT_ERROR = "Enter one nonnegative border value or four comma-sep
 local function parse_borders(border)
     if type(border) ~= "string" then
         error(BORDER_INPUT_ERROR, 0)
+    end
+    -- The decimal pattern can backtrack on malformed input.
+    if #border > MAX_BORDER_BYTES then
+        error("The border field must be at most " .. MAX_BORDER_BYTES .. " bytes.", 0)
     end
 
     local borders = {}
@@ -30,12 +38,19 @@ local function parse_borders(border)
     return table.unpack(borders)
 end
 
-local function resolve_layout(dimensions)
-    if not is_finite_positive_number(dimensions.base_height) then
-        error("Base plate height must be a positive number.", 0)
+local function validate_height(value, label)
+    if type(value) ~= "number" or not (value >= MIN_FEATURE_SIZE and value <= MAX_MODEL_SIZE) then
+        error(("%s must be between %g and %g mm."):format(label, MIN_FEATURE_SIZE, MAX_MODEL_SIZE), 0)
     end
-    if not is_finite_positive_number(dimensions.pattern_height) then
-        error("Raised square height must be a positive number.", 0)
+end
+
+local function resolve_layout(dimensions)
+    local base_height = dimensions.base_height
+    local pattern_height = dimensions.pattern_height
+    validate_height(base_height, "Base plate height")
+    validate_height(pattern_height, "Raised square height")
+    if base_height + pattern_height > MAX_MODEL_SIZE then
+        error("Base plate height and raised square height must add up to at most " .. MAX_MODEL_SIZE .. " mm.", 0)
     end
 
     local qr_size = dimensions.qr_size
@@ -64,8 +79,8 @@ local function resolve_layout(dimensions)
 
     local plate_width = legacy_plate_size or (qr_size + left + right)
     local plate_height = legacy_plate_size or (qr_size + bottom + top)
-    if not is_finite_positive_number(plate_width) or not is_finite_positive_number(plate_height) then
-        error("The QR pattern and borders must produce finite plate dimensions.", 0)
+    if plate_width > MAX_MODEL_SIZE or plate_height > MAX_MODEL_SIZE then
+        error("The QR pattern and borders must fit within " .. MAX_MODEL_SIZE .. " mm on each side of the plate.", 0)
     end
 
     return {
@@ -77,4 +92,4 @@ local function resolve_layout(dimensions)
     }
 end
 
-return { resolve_layout = resolve_layout }
+return { resolve_layout = resolve_layout, MIN_FEATURE_SIZE = MIN_FEATURE_SIZE }

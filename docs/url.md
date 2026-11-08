@@ -14,10 +14,10 @@ Create a 3D-printable QR code for a web address or a short piece of text, such a
 | Parameter | What it controls | Valid values | Default |
 | --- | --- | --- | --- |
 | **Text or URL** | The content stored in the QR code. | 1 to 1,024 bytes of text without control characters such as tabs or line breaks. | `https://example.com` |
-| **QR pattern size (mm)** | The side length of the square QR pattern, excluding the borders. | Any finite number greater than zero. Decimals are allowed. | `80` |
+| **QR pattern size (mm)** | The side length of the square QR pattern, excluding the borders. | At least 0.01 mm per QR module. See the [model limits](../README.md#model-limits). | `80` |
 | **Border (top, right, bottom, left)** | The distance in millimeters from the pattern to each edge of the plate. | Enter `5` for 5 mm on every side, or enter four comma-separated values in **top, right, bottom, left** order. For example, `5, 5, 25, 5` gives 25 mm below the code and 5 mm on the other sides. Use nonnegative numbers and a decimal point for fractions. | `5` |
-| **Base plate height (mm)** | The thickness of the plate beneath the pattern. | Any finite number greater than zero. Decimals are allowed. | `2` |
-| **Raised square height (mm)** | How far the QR squares rise above the plate. | Any finite number greater than zero. Decimals are allowed. | `1` |
+| **Base plate height (mm)** | The thickness of the plate beneath the pattern. | At least 0.01 mm. | `2` |
+| **Raised square height (mm)** | How far the QR squares rise above the plate. | At least 0.01 mm. Both heights together can be at most 1,000 mm. | `1` |
 
 The text limit counts bytes. Some characters, such as accented letters or emoji, take up more than one byte.
 

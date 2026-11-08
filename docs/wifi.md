@@ -21,10 +21,10 @@ Anyone who can scan the model or print can read the encoded network credentials.
 | **Security** | The security type encoded for the network. | **WPA/WPA2 Personal**, **WPA3 Personal**, **WEP**, or **Open**. | — |
 | **Wi-Fi password (leave blank for Open)** | The password or key stored in the code. | See the password and key requirements below. | Blank |
 | **Hidden network** | Whether the code identifies the network as hidden. | Checked for a hidden network. Unchecked for a network that broadcasts its name. | Unchecked |
-| **QR pattern size (mm)** | The side length of the square QR pattern, excluding the borders. | Any finite number greater than zero. Decimals are allowed. | `80` |
+| **QR pattern size (mm)** | The side length of the square QR pattern, excluding the borders. | At least 0.01 mm per QR module. See the [model limits](../README.md#model-limits). | `80` |
 | **Border (top, right, bottom, left)** | The distance in millimeters from the pattern to each edge of the plate. | Enter `5` for 5 mm on every side, or enter four comma-separated values in **top, right, bottom, left** order. For example, `5, 5, 25, 5` gives 25 mm below the code and 5 mm on the other sides. Use nonnegative numbers and a decimal point for fractions. | `5` |
-| **Base plate height (mm)** | The thickness of the plate beneath the pattern. | Any finite number greater than zero. Decimals are allowed. | `2` |
-| **Raised square height (mm)** | How far the QR squares rise above the plate. | Any finite number greater than zero. Decimals are allowed. | `1` |
+| **Base plate height (mm)** | The thickness of the plate beneath the pattern. | At least 0.01 mm. | `2` |
+| **Raised square height (mm)** | How far the QR squares rise above the plate. | At least 0.01 mm. Both heights together can be at most 1,000 mm. | `1` |
 
 ### Password and key requirements
 
