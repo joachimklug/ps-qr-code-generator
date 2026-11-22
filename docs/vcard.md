@@ -20,15 +20,17 @@ Create a 3D-printable QR code that stores contact details in vCard 3.0 format. A
 | **Phone number** | The contact’s telephone number. | Digits with an optional leading `+`. Spaces, parentheses, periods, and hyphens are allowed. For example, `+1 202 555 0148`. Leave blank to omit it. | Blank |
 | **Email address** | The contact’s email address. | An address such as `name@example.com` with one `@` and no spaces or angle brackets, or blank. | Blank |
 | **Website URL** | The website associated with the contact. | A full address starting with `http://` or `https://`, such as `https://example.com`, or blank. | Blank |
-| **QR pattern size (mm)** | The side length of the square QR pattern, excluding the borders. | At least 0.01 mm per QR module. See the [model limits](../README.md#model-limits). | `80` |
-| **Border (top, right, bottom, left)** | The distance in millimeters from the pattern to each edge of the plate. | Enter `5` for 5 mm on every side, or enter four comma-separated values in **top, right, bottom, left** order. For example, `5, 5, 25, 5` gives 25 mm below the code and 5 mm on the other sides. Use nonnegative numbers and a decimal point for fractions. | `5` |
+| **QR pattern size (mm)** | The side length of the square QR pattern, excluding the borders. | Each QR module must be at least as wide as the printer’s nozzle. See the [model limits](../README.md#model-limits). | `80` |
+| **Border: auto or mm (top, right, bottom, left)** | The clear space between the pattern and each edge of the plate. Scanners need this quiet zone to find the code. | Enter `auto` for four QR modules on every side, or a value in millimeters such as `5`. For different borders, enter four comma-separated values in **top, right, bottom, left** order. Each value can be `auto` or millimeters. For example, `auto, auto, 25, auto` adds 25 mm below the code for a label. Use nonnegative numbers and a decimal point for fractions. | `auto` |
 | **Base plate height (mm)** | The thickness of the plate beneath the pattern. | At least 0.01 mm. | `2` |
 | **Raised square height (mm)** | How far the QR squares rise above the plate. | At least 0.01 mm. Both heights together can be at most 1,000 mm. | `1` |
 
 Contact fields cannot contain control characters such as tabs or line breaks. The complete encoded vCard can be at most 1,024 bytes, including formatting. Some characters, such as accented letters, take up more than one byte.
 
+Scanners guess the character encoding because the plugin doesn’t mark the text as UTF-8. Most phones show accented letters such as ä, ö, ü, and ß correctly, but some older scanners don’t. Scan the print to check.
+
 ## Plate dimensions
 
-The plate width includes the QR pattern and the left and right borders. Its height in the top view includes the pattern and the top and bottom borders. The default plate is **90 × 90 mm**, with a total thickness of **3 mm** at the raised squares.
+The plate width includes the QR pattern and the left and right borders. Its height in the top view includes the pattern and the top and bottom borders. With the default `auto` border, the plate size depends on how dense the code is. Contact details usually make dense codes. For example, a code of 45 × 45 modules with the 80 mm pattern gets 7.1 mm borders and a plate of about 94.2 × 94.2 mm. The total thickness at the raised squares is **3 mm** by default.
 
-If you add text or graphics, keep a clear margin of at least four QR modules around the pattern. A module is one square in the QR grid.
+Borders narrower than four modules can make the code harder to scan. If you add text or graphics, keep them outside the four-module margin around the pattern. A module is one square in the QR grid.

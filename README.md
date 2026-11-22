@@ -23,21 +23,31 @@ This QR code generator requires **PrusaSlicer 3.0.0-alpha13 or newer**.
 
 ## Pattern size and borders
 
-**QR pattern size (mm)** sets the side length of the square QR pattern. All generators default to an 80 mm pattern with 5 mm borders, producing a 90 × 90 mm plate.
+**QR pattern size (mm)** sets the side length of the square QR pattern. All generators default to an 80 mm pattern.
 
-In **Border**, enter one value in millimeters, such as `5`, for all sides. For different borders, enter four comma-separated values in **top, right, bottom, left** order. With the default pattern size, `5, 5, 25, 5` gives a 90 × 110 mm plate with extra room below the code. Use zero or positive values and a decimal point for fractions such as `2.5`.
+**Border** sets the clear space around the pattern, called the quiet zone. Scanners need it to find the code. The default, `auto`, leaves four QR modules on every side, as the QR standard recommends. A module is one square in the QR grid, so an `auto` border grows with the module size. Enter a value in millimeters, such as `5`, to use the same border on every side.
 
-If you add text or graphics, leave at least four QR modules of clear space on each side of the pattern.
+For different borders, enter four comma-separated values in **top, right, bottom, left** order. Each value can be `auto` or millimeters. For example, `auto, auto, 25, auto` adds 25 mm below the code for a label. Use zero or positive values and a decimal point for fractions such as `2.5`.
+
+Borders narrower than four modules can make the code harder to scan. If you add text or graphics, keep them outside the four-module margin.
 
 ### Model limits
 
-The finished model can measure up to 1,000 mm along each axis, including the borders and both heights. The base and raised heights must each be at least 0.01 mm, as must the width of each QR module. The minimum pattern size increases as the QR grid gets denser.
+The finished model can measure up to 1,000 mm along each axis, including the borders and both heights. The base and raised heights must each be at least 0.01 mm. Each QR module must be at least as wide as the smallest nozzle of the selected printer, or 0.01 mm if PrusaSlicer doesn’t report a nozzle. Denser codes need a larger pattern.
 
-The border field accepts up to 256 bytes. The raised pattern can contain up to 900 model parts. If your QR code exceeds that limit, shorten its contents. Generate dense QR codes in an empty project because PrusaSlicer also counts parts from existing objects toward its scene limit.
+The border field accepts up to 256 bytes. The raised pattern can contain up to 900 model parts. Long content usually reaches this limit before the 1,024-byte limit for text and vCards. If that happens, shorten the content. Generate dense QR codes in an empty project because PrusaSlicer also counts parts from existing objects toward its scene limit.
+
+Scanners guess the character encoding because the plugin doesn’t mark text as UTF-8. Most phones show accented letters such as ä, ö, ü, and ß correctly, but some older scanners don’t. Scan the print to check.
+
+## When a code can’t be created
+
+If an input is invalid, for example a Wi-Fi password that’s too short, the plugin adds a thin plate to the bed with the reason embossed on it, starting with “QR code not created”. PrusaSlicer 3.0.0-alpha14 doesn’t show error messages from plugins, so this plate is how the plugin tells you what went wrong. Read the message, delete the plate, and run the command again with corrected values.
 
 ## How it’s organized
 
-Each QR command has a Lua file at the bundle root for its inputs and the data it encodes. The shared code lives in `lib/`. The commands use `lib/qr_plate.lua` to build the plate with `lib/qrencode.lua` for encoding, `lib/qr_geometry.lua` for the raised pattern, and `lib/utils.lua` for dimension checks.
+Each QR command has a Lua file at the bundle root for its inputs and the data it encodes. The shared code lives in `lib/`. The commands use `lib/qr_plate.lua` to build the plate with `lib/qrencode.lua` for encoding, `lib/qr_geometry.lua` for the raised pattern, and `lib/utils.lua` for dimension checks. Each command runs through `lib/error_plate.lua`, which turns a failed check into an error plate on the bed. `lib/qrencode.lua` is vendored. [`lib/VENDORED.md`](lib/VENDORED.md) records its source and local changes.
+
+The four dimension params are copied into every command file because PrusaSlicer reads `info` before `require` is available. The **Check** workflow runs `scripts/check_shared_params.lua` to keep them identical and checks the syntax of every Lua file. The release workflow runs the same checks and stops if the release tag doesn’t match the `manifest.json` version.
 
 ## VS Code setup
 

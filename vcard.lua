@@ -11,12 +11,14 @@ info = {
         { name = "phone",        label = "Phone number",         type = "string", default = "" },
         { name = "email",        label = "Email address",        type = "string", default = "" },
         { name = "website",      label = "Website URL",          type = "string", default = "" },
+        -- Shared dimension params. PrusaSlicer reads info before require is available, so these
+        -- are copied into every command file. scripts/check_shared_params.lua keeps them in sync.
         { name = "qr_size",      label = "QR pattern size (mm)", type = "float",  default = 80 },
         {
             name = "border",
-            label = "Border (top, right, bottom, left)",
+            label = "Border: auto or mm (top, right, bottom, left)",
             type = "string",
-            default = "5"
+            default = "auto"
         },
         { name = "base_height",    label = "Base plate height (mm)",    type = "float", default = 2 },
         { name = "pattern_height", label = "Raised square height (mm)", type = "float", default = 1 }
@@ -71,7 +73,7 @@ local function fold_line(line)
     return table.concat(chunks, "\r\n ")
 end
 
-function execute(opts)
+local function generate(opts)
     local first_name = read_contact_field(opts.first_name, "First name")
     local last_name = read_contact_field(opts.last_name, "Last name")
     if first_name == "" and last_name == "" then
@@ -119,4 +121,9 @@ function execute(opts)
     end
 
     require("lib/qr_plate").add_qr_plate(payload, opts, "Could not encode the contact details as a QR code.")
+end
+
+-- PrusaSlicer does not show errors from plugin commands, so lib/error_plate.lua shows them on the bed.
+function execute(opts)
+    require("lib/error_plate").run(generate, opts)
 end

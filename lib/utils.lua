@@ -1,13 +1,31 @@
 local MIN_FEATURE_SIZE = 0.01
 local MAX_MODEL_SIZE = 1000
 local MAX_BORDER_BYTES = 256
+-- The QR standard asks for a quiet zone of four modules on each side of the pattern.
+local QUIET_ZONE_MODULES = 4
+local AUTO_BORDER = "auto"
+
+local BORDER_INPUT_ERROR = "Enter auto, one nonnegative border value in mm, or four comma-separated values in top, right, bottom, left order. Each value can be auto or mm. Use a decimal point for fractions, such as 2.5."
 
 local function is_finite_positive_number(value)
     return type(value) == "number" and value > 0 and value < math.huge
 end
 
-local BORDER_INPUT_ERROR = "Enter one nonnegative border value or four comma-separated values in top, right, bottom, left order. Use a decimal point for fractions."
+local function parse_border_field(field)
+    if field:match("^%s*(.-)%s*$"):lower() == AUTO_BORDER then
+        return AUTO_BORDER
+    end
+    local decimal = field:match("^%s*(%d*%.?%d*)%s*$")
+    local width = decimal and tonumber(decimal)
+    if width ~= 0 and not is_finite_positive_number(width) then
+        error(BORDER_INPUT_ERROR, 0)
+    end
+    -- Keep plate dimension sums in floating point even for whole millimeters.
+    return width + 0.0
+end
 
+-- Returns each side as a width in mm or as AUTO_BORDER, which resolve_layout replaces
+-- with the quiet zone once the QR grid size is known.
 local function parse_borders(border)
     if type(border) ~= "string" then
         error(BORDER_INPUT_ERROR, 0)
@@ -19,23 +37,20 @@ local function parse_borders(border)
 
     local borders = {}
     for field in (border .. ","):gmatch("([^,]*),") do
-        local decimal = field:match("^%s*(%d*%.?%d*)%s*$")
-        local width = decimal and tonumber(decimal)
-        if (width ~= 0 and not is_finite_positive_number(width)) or #borders == 4 then
+        if #borders == 4 then
             error(BORDER_INPUT_ERROR, 0)
         end
-        -- Keep plate dimension sums in floating point even for whole millimeters.
-        borders[#borders + 1] = width + 0.0
+        borders[#borders + 1] = parse_border_field(field)
     end
 
     if #borders == 1 then
         local width = borders[1]
-        return width, width, width, width
+        return { top = width, right = width, bottom = width, left = width }
     end
     if #borders ~= 4 then
         error(BORDER_INPUT_ERROR, 0)
     end
-    return table.unpack(borders)
+    return { top = borders[1], right = borders[2], bottom = borders[3], left = borders[4] }
 end
 
 local function validate_height(value, label)
@@ -44,7 +59,13 @@ local function validate_height(value, label)
     end
 end
 
-local function resolve_layout(dimensions)
+-- Round up to 0.01 mm so a suggested minimum is never below the real one.
+local function format_minimum(value)
+    return ("%.2f"):format(math.ceil(value * 100 - 1e-6) / 100)
+end
+
+-- Checks the dialog values that do not depend on the QR content.
+local function validate_dimensions(dimensions)
     local base_height = dimensions.base_height
     local pattern_height = dimensions.pattern_height
     validate_height(base_height, "Base plate height")
@@ -54,37 +75,60 @@ local function resolve_layout(dimensions)
     end
 
     local qr_size = dimensions.qr_size
-    local legacy_plate_size
-    local top, right, bottom, left
-    if qr_size == nil and dimensions.plate_size ~= nil then
-        legacy_plate_size = dimensions.plate_size
-        local border = dimensions.border
-        if not is_finite_positive_number(legacy_plate_size) then
-            error("Total QR size must be a positive number.", 0)
-        end
-        if border ~= 0 and not is_finite_positive_number(border) then
-            error("Border width must be zero or a positive number.", 0)
-        end
-        if border >= legacy_plate_size - border then
-            error("Border width per side must be less than half the total QR size.", 0)
-        end
-        qr_size = legacy_plate_size - border - border
-        top, right, bottom, left = border, border, border, border
-    else
-        top, right, bottom, left = parse_borders(dimensions.border)
-    end
-    if not is_finite_positive_number(qr_size) then
-        error("QR pattern size must be a positive number.", 0)
+    if not is_finite_positive_number(qr_size) or qr_size > MAX_MODEL_SIZE then
+        error(("QR pattern size must be a positive number of at most %g mm."):format(MAX_MODEL_SIZE), 0)
     end
 
-    local plate_width = legacy_plate_size or (qr_size + left + right)
-    local plate_height = legacy_plate_size or (qr_size + bottom + top)
+    return {
+        qr_size = qr_size + 0.0,
+        base_height = base_height,
+        pattern_height = pattern_height,
+        borders = parse_borders(dimensions.border)
+    }
+end
+
+-- Computes the plate layout for a QR grid of matrix_size modules per side.
+-- nozzle_diameter is optional; when present, each module must be at least that wide.
+local function resolve_layout(spec, matrix_size, nozzle_diameter)
+    local qr_size = spec.qr_size
+    local module_size = qr_size / matrix_size
+
+    local min_module_size = MIN_FEATURE_SIZE
+    local limited_by_nozzle = nozzle_diameter ~= nil and nozzle_diameter > min_module_size
+    if limited_by_nozzle then
+        min_module_size = nozzle_diameter
+    end
+    local min_qr_size = matrix_size * min_module_size
+    -- Allow for floating-point rounding when the size is exactly at the minimum.
+    if qr_size + 1e-9 < min_qr_size then
+        if limited_by_nozzle then
+            error(("Each QR square would be %.2f mm wide, narrower than the %.2f mm nozzle. Set the QR pattern size to at least %s mm or shorten the content."):format(
+                module_size, nozzle_diameter, format_minimum(min_qr_size)), 0)
+        end
+        error(("Increase the QR pattern size to at least %s mm for this QR code."):format(format_minimum(min_qr_size)), 0)
+    end
+
+    local quiet_zone = QUIET_ZONE_MODULES * module_size
+    local function side_width(value)
+        if value == AUTO_BORDER then
+            return quiet_zone
+        end
+        return value
+    end
+    local borders = spec.borders
+    local top = side_width(borders.top)
+    local right = side_width(borders.right)
+    local bottom = side_width(borders.bottom)
+    local left = side_width(borders.left)
+
+    local plate_width = qr_size + left + right
+    local plate_height = qr_size + bottom + top
     if plate_width > MAX_MODEL_SIZE or plate_height > MAX_MODEL_SIZE then
         error("The QR pattern and borders must fit within " .. MAX_MODEL_SIZE .. " mm on each side of the plate.", 0)
     end
 
     return {
-        qr_size = qr_size,
+        module_size = module_size,
         plate_width = plate_width,
         plate_height = plate_height,
         border_left = left,
@@ -92,4 +136,4 @@ local function resolve_layout(dimensions)
     }
 end
 
-return { resolve_layout = resolve_layout, MIN_FEATURE_SIZE = MIN_FEATURE_SIZE }
+return { validate_dimensions = validate_dimensions, resolve_layout = resolve_layout }
