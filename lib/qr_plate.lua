@@ -40,6 +40,38 @@ local function encode(payload, encoding_error)
     error(encoding_error .. " Details: " .. reason, 0)
 end
 
+local TWO_COLOR_CHANGE = "Two colors: color change (one nozzle)"
+local TWO_COLOR_TOOL = "Two colors: second tool (multi-tool)"
+local PATTERN_TOOL = 2
+
+-- Reads the layer heights of the current bed's print preset in mm.
+local function read_layer_heights(bed)
+    local ok, layer, first = pcall(function()
+        local presets = bed:print_presets()
+        local layer_height = presets:value("layer_height")
+        local first_layer_height = presets:value("first_layer_height")
+        -- first_layer_height can be a percentage of the layer height.
+        if type(first_layer_height) ~= "number" and first_layer_height ~= nil then
+            first_layer_height = first_layer_height:get_abs_value(layer_height)
+        end
+        return layer_height, first_layer_height
+    end)
+    if not ok or type(layer) ~= "number" or layer <= 0 or type(first) ~= "number" or first <= 0 then
+        error("Could not read the layer heights from the print preset, so the color change can't be placed. Choose Two colors: off, or check the print preset.", 0)
+    end
+    return layer, first
+end
+
+local function read_tool_count(bed)
+    local ok, count = pcall(function()
+        return bed:printer_config().tool_count
+    end)
+    if ok and type(count) == "number" then
+        return count
+    end
+    return nil
+end
+
 local function add_qr_plate(payload, dimensions, encoding_error)
     local qr_geometry = require("lib/qr_geometry")
     local utils = require("lib/utils")
@@ -55,6 +87,32 @@ local function add_qr_plate(payload, dimensions, encoding_error)
         base_height = spec.base_height,
         pattern_height = spec.pattern_height
     })
+
+    -- Check the two-color mode before adding anything, so a problem leaves the bed unchanged.
+    local bed = api.project:current_bed()
+    local color_change_z
+    if dimensions.two_color == TWO_COLOR_CHANGE then
+        local layer_height, first_layer_height = read_layer_heights(bed)
+        color_change_z = utils.first_pattern_layer_z(spec.base_height, spec.pattern_height, layer_height, first_layer_height)
+    elseif dimensions.two_color == TWO_COLOR_TOOL then
+        local tool_count = read_tool_count(bed)
+        if tool_count == nil or tool_count < PATTERN_TOOL then
+            error("The selected printer has only one tool. Choose the color change (one nozzle) instead.", 0)
+        end
+        for _, volume in ipairs(pattern_volumes) do
+            -- A volume with params defaults to a modifier, so mark it as a solid part explicitly.
+            volume.type = VolumeType.Solid
+            volume.params = { extruder = PATTERN_TOOL }
+        end
+    end
+
+    if color_change_z then
+        -- Inserted as custom G-code: the printer pauses for the filament change, but PrusaSlicer's
+        -- preview stays one color and the print time estimate doesn't include the change.
+        -- Insert it before add_object: PrusaSlicer 3.0.0-alpha14 only picks up the G-code at the
+        -- next scene change, and adding the plate is that change.
+        api.project:insert_layer_custom_gcode(bed, color_change_z, "M600")
+    end
     api.project:add_object {
         mesh = api.make_cube(layout.plate_width, layout.plate_height, spec.base_height),
         other_volumes = pattern_volumes

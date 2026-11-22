@@ -39,6 +39,21 @@ The border field accepts up to 256 bytes. The raised pattern can contain up to 9
 
 Scanners guess the character encoding because the plugin doesn’t mark text as UTF-8. Most phones show accented letters such as ä, ö, ü, and ß correctly, but some older scanners don’t. Scan the print to check.
 
+## Two-color prints
+
+A QR code scans best with strong contrast between the raised squares and the plate. Use the **Two colors** dropdown in the dialog to print the squares in a second color:
+
+- **Two colors: color change (one nozzle):** The plugin inserts an `M600` filament change before the first layer that contains only raised squares. It reads the layer heights from the print preset, so the change always lands on a real layer. The printer pauses, you swap the filament, and the rest of the squares print in the new color.
+
+  **Preview shows only one layer in the new color.** Plugins can only insert custom G-code, so PrusaSlicer marks the change with a **G** on the layer slider but doesn't know the filament changed. It highlights only that layer and draws the layers above it in the base color. The print is still correct: nothing switches back, so every layer after the change prints in the new filament. The filament change also isn't included in the print time estimate.
+
+  For a preview in two colors, choose **Two colors: off** and add PrusaSlicer’s own color change instead: in Preview, move the layer slider to the first layer above the base plate and click **+**. With a 2 mm base and 0.2 mm layers, that’s the 2.20 mm layer.
+
+  The change applies to every object on that bed, so print QR codes on their own bed. Printers that don’t support `M600` need a different command.
+- **Two colors: second tool (multi-tool):** The raised squares print with tool 2, and the plate prints with tool 1. This needs a printer with at least two tools, such as the Prusa CORE One INDX or XL. Load the colors you want in tools 1 and 2.
+
+Dark squares on a light plate scan most reliably.
+
 ## When a code can’t be created
 
 If an input is invalid, for example a Wi-Fi password that’s too short, the plugin adds a thin plate to the bed with the reason embossed on it, starting with “QR code not created”. PrusaSlicer 3.0.0-alpha14 doesn’t show error messages from plugins, so this plate is how the plugin tells you what went wrong. Read the message, delete the plate, and run the command again with corrected values.

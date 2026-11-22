@@ -18,6 +18,7 @@ Create a 3D-printable QR code for a web address or a short piece of text, such a
 | **Border: auto or mm (top, right, bottom, left)** | The clear space between the pattern and each edge of the plate. Scanners need this quiet zone to find the code. | Enter `auto` for four QR modules on every side, or a value in millimeters such as `5`. For different borders, enter four comma-separated values in **top, right, bottom, left** order. Each value can be `auto` or millimeters. For example, `auto, auto, 25, auto` adds 25 mm below the code for a label. Use nonnegative numbers and a decimal point for fractions. | `auto` |
 | **Base plate height (mm)** | The thickness of the plate beneath the pattern. | At least 0.01 mm. | `2` |
 | **Raised square height (mm)** | How far the QR squares rise above the plate. | At least 0.01 mm. Both heights together can be at most 1,000 mm. | `1` |
+| **Two colors** (dropdown) | How the raised squares get a second color. | **Two colors: off** prints everything in one color. **Two colors: color change (one nozzle)** pauses the print for a filament change at the first layer of raised squares. **Two colors: second tool (multi-tool)** prints the raised squares with tool 2 on printers such as the INDX or XL. See [Two-color prints](../README.md#two-color-prints). | **Two colors: off** |
 
 The text limit counts bytes. Some characters, such as accented letters or emoji, take up more than one byte.
 

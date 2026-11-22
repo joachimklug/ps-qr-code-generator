@@ -21,7 +21,13 @@ info = {
             default = "auto"
         },
         { name = "base_height",    label = "Base plate height (mm)",    type = "float", default = 2 },
-        { name = "pattern_height", label = "Raised square height (mm)", type = "float", default = 1 }
+        { name = "pattern_height", label = "Raised square height (mm)", type = "float", default = 1 },
+        {
+            name = "two_color",
+            label = "Two colors",
+            type = "combobox",
+            allowed_values = { "Two colors: off", "Two colors: color change (one nozzle)", "Two colors: second tool (multi-tool)" }
+        }
     }
 }
 

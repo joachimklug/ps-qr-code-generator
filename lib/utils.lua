@@ -136,4 +136,24 @@ local function resolve_layout(spec, matrix_size, nozzle_diameter)
     }
 end
 
-return { validate_dimensions = validate_dimensions, resolve_layout = resolve_layout }
+-- Returns the top Z of the first layer that contains only raised squares. PrusaSlicer slices
+-- each layer at its middle, so this is the first layer whose middle lies above the base plate.
+local function first_pattern_layer_z(base_height, pattern_height, layer_height, first_layer_height)
+    local top = first_layer_height
+    local height = first_layer_height
+    while top - height / 2 <= base_height + 1e-6 do
+        top = top + layer_height
+        height = layer_height
+    end
+    if top - height / 2 >= base_height + pattern_height - 1e-6 then
+        error(("The raised squares are too thin for %g mm layers. Increase the raised square height to at least %g mm."):format(
+            layer_height, layer_height), 0)
+    end
+    return top
+end
+
+return {
+    validate_dimensions = validate_dimensions,
+    resolve_layout = resolve_layout,
+    first_pattern_layer_z = first_pattern_layer_z
+}

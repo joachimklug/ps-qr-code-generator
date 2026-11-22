@@ -10,7 +10,7 @@ if type(arg) ~= "table" then
     return
 end
 
-local SHARED_PARAMS = { "qr_size", "border", "base_height", "pattern_height" }
+local SHARED_PARAMS = { "qr_size", "border", "base_height", "pattern_height", "two_color" }
 
 local function serialize(value)
     if type(value) ~= "table" then
