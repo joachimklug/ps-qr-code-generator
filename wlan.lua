@@ -29,7 +29,8 @@ info = {
             label = "Two colors",
             type = "combobox",
             allowed_values = { "Two colors: off", "Two colors: color change (one nozzle)", "Two colors: second tool (multi-tool)" }
-        }
+        },
+        { name = "hole_diameter", label = "Keychain hole diameter (mm), 0 = none", type = "float", default = 0 }
     }
 }
 

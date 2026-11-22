@@ -26,6 +26,7 @@ Anyone who can scan the model or print can read the encoded network credentials.
 | **Base plate height (mm)** | The thickness of the plate beneath the pattern. | At least 0.01 mm. | `2` |
 | **Raised square height (mm)** | How far the QR squares rise above the plate. | At least 0.01 mm. Both heights together can be at most 1,000 mm. | `1` |
 | **Two colors** (dropdown) | How the raised squares get a second color. | **Two colors: off** prints everything in one color. **Two colors: color change (one nozzle)** pauses the print for a filament change at the first layer of raised squares. **Two colors: second tool (multi-tool)** prints the raised squares with tool 2 on printers such as the INDX or XL. See [Two-color prints](../README.md#two-color-prints). | **Two colors: off** |
+| **Keychain hole diameter (mm), 0 = none** | Adds a rounded tab with a hole for a key ring, centered above the plate. The tab sticks out of the plate, so the QR pattern and its border keep their size. See [Keychain hole](../README.md#keychain-hole). | `0` for no hole, or 1 to 30 mm. | `0` |
 
 ### Password and key requirements
 

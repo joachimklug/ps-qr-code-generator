@@ -87,6 +87,12 @@ local function add_qr_plate(payload, dimensions, encoding_error)
         base_height = spec.base_height,
         pattern_height = spec.pattern_height
     })
+    -- Build the keychain tab before changing the bed, so a problem leaves the bed unchanged.
+    local tab_volumes = {}
+    local tab = utils.resolve_keychain_tab(spec, layout)
+    if tab then
+        tab_volumes = require("lib/keychain").make_tab_volumes(tab, spec.base_height, spec.pattern_height)
+    end
 
     -- Check the two-color mode before adding anything, so a problem leaves the bed unchanged.
     local bed = api.project:current_bed()
@@ -113,9 +119,16 @@ local function add_qr_plate(payload, dimensions, encoding_error)
         -- next scene change, and adding the plate is that change.
         api.project:insert_layer_custom_gcode(bed, color_change_z, "M600")
     end
+    -- The tab prints with the plate, so it joins the pattern only after the pattern got its tool.
+    local other_volumes = {}
+    for _, volumes in ipairs({ pattern_volumes, tab_volumes }) do
+        for _, volume in ipairs(volumes) do
+            other_volumes[#other_volumes + 1] = volume
+        end
+    end
     api.project:add_object {
         mesh = api.make_cube(layout.plate_width, layout.plate_height, spec.base_height),
-        other_volumes = pattern_volumes
+        other_volumes = other_volumes
     }
 end
 

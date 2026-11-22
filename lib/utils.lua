@@ -5,6 +5,14 @@ local MAX_BORDER_BYTES = 256
 local QUIET_ZONE_MODULES = 4
 local AUTO_BORDER = "auto"
 
+-- Keychain tab. The tab sticks out above the plate, so the hole never cuts into the quiet zone.
+local MIN_HOLE_DIAMETER = 1
+local MAX_HOLE_DIAMETER = 30
+-- The ring around the hole is at least this wide, or half the hole diameter for larger holes.
+local MIN_TAB_WALL = 2.5
+-- How far the tab reaches into the plate, so the two fuse into one part.
+local TAB_OVERLAP = 0.5
+
 local BORDER_INPUT_ERROR = "Enter auto, one nonnegative border value in mm, or four comma-separated values in top, right, bottom, left order. Each value can be auto or mm. Use a decimal point for fractions, such as 2.5."
 
 local function is_finite_positive_number(value)
@@ -79,11 +87,22 @@ local function validate_dimensions(dimensions)
         error(("QR pattern size must be a positive number of at most %g mm."):format(MAX_MODEL_SIZE), 0)
     end
 
+    -- A diameter of 0 means no keychain hole.
+    local hole_diameter = dimensions.hole_diameter
+    if hole_diameter == nil then
+        hole_diameter = 0
+    end
+    if type(hole_diameter) ~= "number" or not (hole_diameter == 0
+            or (hole_diameter >= MIN_HOLE_DIAMETER and hole_diameter <= MAX_HOLE_DIAMETER)) then
+        error(("Keychain hole diameter must be 0 for no hole, or between %g and %g mm."):format(MIN_HOLE_DIAMETER, MAX_HOLE_DIAMETER), 0)
+    end
+
     return {
         qr_size = qr_size + 0.0,
         base_height = base_height,
         pattern_height = pattern_height,
-        borders = parse_borders(dimensions.border)
+        borders = parse_borders(dimensions.border),
+        hole_diameter = hole_diameter
     }
 end
 
@@ -136,6 +155,39 @@ local function resolve_layout(spec, matrix_size, nozzle_diameter)
     }
 end
 
+-- Returns the keychain tab centered above the plate from resolve_layout, or nil without a hole.
+-- The tab is a round ring with the hole in its center, joined to the plate by a rectangular
+-- bridge. Coordinates use the plate's lower-left corner as the origin.
+local function resolve_keychain_tab(spec, layout)
+    if spec.hole_diameter == 0 then
+        return nil
+    end
+    local hole_radius = spec.hole_diameter / 2
+    local outer_radius = hole_radius + math.max(MIN_TAB_WALL, spec.hole_diameter / 2)
+    local height = layout.plate_height
+    local overlap = math.min(TAB_OVERLAP, height)
+
+    local center = { x = layout.plate_width / 2, y = height + outer_radius }
+    local bridge = {
+        x = center.x - outer_radius,
+        y = height - overlap,
+        width = 2 * outer_radius,
+        height = outer_radius + overlap
+    }
+
+    -- The tab is centered and at most 60 mm wide, so only the added height can exceed the limit.
+    if center.y + outer_radius > MAX_MODEL_SIZE then
+        error("The plate and keychain tab must fit within " .. MAX_MODEL_SIZE .. " mm on each side. Use a smaller pattern, border, or hole.", 0)
+    end
+
+    return {
+        center = center,
+        outer_radius = outer_radius,
+        hole_radius = hole_radius,
+        bridge = bridge
+    }
+end
+
 -- Returns the top Z of the first layer that contains only raised squares. PrusaSlicer slices
 -- each layer at its middle, so this is the first layer whose middle lies above the base plate.
 local function first_pattern_layer_z(base_height, pattern_height, layer_height, first_layer_height)
@@ -155,5 +207,6 @@ end
 return {
     validate_dimensions = validate_dimensions,
     resolve_layout = resolve_layout,
+    resolve_keychain_tab = resolve_keychain_tab,
     first_pattern_layer_z = first_pattern_layer_z
 }

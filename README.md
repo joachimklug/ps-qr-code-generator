@@ -1,6 +1,6 @@
 # QR Code Generator for PrusaSlicer
 
-Create 3D-printable QR codes for text, links, Wi-Fi, and contacts directly in PrusaSlicer. Customize the QR pattern size, border on each side, base thickness, and height of the raised QR pattern.
+Create 3D-printable QR codes for text, links, Wi-Fi, and contacts directly in PrusaSlicer. Customize the QR pattern size, border on each side, base thickness, and height of the raised QR pattern, and add a keychain hole.
 
 ![Generated QR code on the build plate in PrusaSlicer](assets/qr-example.png)
 
@@ -54,15 +54,23 @@ A QR code scans best with strong contrast between the raised squares and the pla
 
 Dark squares on a light plate scan most reliably.
 
+## Keychain hole
+
+Set **Keychain hole diameter (mm), 0 = none** to a value above 0 to add a rounded tab with a hole for a key ring, centered above the plate. Leave it at `0` for no hole.
+
+The tab is added outside the plate, so it never cuts into the QR pattern or the quiet zone, and the plate keeps its size. The finished model grows by the size of the tab: a 5 mm hole adds a tab 10 mm wide that sticks out 10 mm above the plate. The tab is as thick as the base plate and prints in the base color, also with **Two colors** turned on.
+
+The diameter can be 1 to 30 mm. 5 mm fits most split rings and lanyard clips. The ring around the hole is 2.5 mm wide, or half the hole diameter for holes larger than 5 mm. The hole is a negative volume, so PrusaSlicer shows it as a separate part in the object list and cuts it when slicing.
+
 ## When a code can’t be created
 
 If an input is invalid, for example a Wi-Fi password that’s too short, the plugin adds a thin plate to the bed with the reason embossed on it, starting with “QR code not created”. PrusaSlicer 3.0.0-alpha14 doesn’t show error messages from plugins, so this plate is how the plugin tells you what went wrong. Read the message, delete the plate, and run the command again with corrected values.
 
 ## How it’s organized
 
-Each QR command has a Lua file at the bundle root for its inputs and the data it encodes. The shared code lives in `lib/`. The commands use `lib/qr_plate.lua` to build the plate with `lib/qrencode.lua` for encoding, `lib/qr_geometry.lua` for the raised pattern, and `lib/utils.lua` for dimension checks. Each command runs through `lib/error_plate.lua`, which turns a failed check into an error plate on the bed. `lib/qrencode.lua` is vendored. [`lib/VENDORED.md`](lib/VENDORED.md) records its source and local changes.
+Each QR command has a Lua file at the bundle root for its inputs and the data it encodes. The shared code lives in `lib/`. The commands use `lib/qr_plate.lua` to build the plate with `lib/qrencode.lua` for encoding, `lib/qr_geometry.lua` for the raised pattern, `lib/keychain.lua` for the optional keychain tab, and `lib/utils.lua` for dimension checks and layout. Each command runs through `lib/error_plate.lua`, which turns a failed check into an error plate on the bed. `lib/qrencode.lua` is vendored. [`lib/VENDORED.md`](lib/VENDORED.md) records its source and local changes.
 
-The four dimension params are copied into every command file because PrusaSlicer reads `info` before `require` is available. The **Check** workflow runs `scripts/check_shared_params.lua` to keep them identical and checks the syntax of every Lua file. The release workflow runs the same checks and stops if the release tag doesn’t match the `manifest.json` version.
+The shared dimension params are copied into every command file because PrusaSlicer reads `info` before `require` is available. The **Check** workflow runs `scripts/check_shared_params.lua` to keep them identical and checks the syntax of every Lua file. The release workflow runs the same checks and stops if the release tag doesn’t match the `manifest.json` version.
 
 ## VS Code setup
 
