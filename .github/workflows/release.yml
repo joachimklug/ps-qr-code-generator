@@ -30,12 +30,25 @@ jobs:
 
       # Every Lua file at the root is a command, and lib/ holds the shared code.
       # Editor files, docs, and scripts/ stay out of the signed bundle.
+      # LICENSE ships as LICENSE.txt: bundles may only contain allowed file types, and
+      # PrusaSlicer rejects a Marketplace install whose bundle has a file without one.
       - name: Stage plugin bundle
         run: |
           bundle="$RUNNER_TEMP/plugin-bundle"
           mkdir -p "$bundle/lib"
-          cp manifest.json LICENSE ./*.lua "$bundle/"
+          cp manifest.json ./*.lua "$bundle/"
+          cp LICENSE "$bundle/LICENSE.txt"
           cp lib/*.lua "$bundle/lib/"
+
+      # Allowed file types from https://plugin-marketplace.prusa3d.com/docs/bundle
+      - name: Check bundle file types
+        run: |
+          disallowed="$(find "$RUNNER_TEMP/plugin-bundle" -type f ! -name '*.lua' ! -name '*.json' ! -name '*.stl' ! -name '*.svg' ! -name '*.png' ! -name '*.md' ! -name '*.txt')"
+          if [ -n "$disallowed" ]; then
+            echo "::error::The bundle contains files the Marketplace does not allow:"
+            echo "$disallowed"
+            exit 1
+          fi
 
       - uses: prusa3d/plugin-marketplace-publish@v1
         with:
