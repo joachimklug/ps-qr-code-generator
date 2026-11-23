@@ -21,7 +21,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y lua5.4
 
       - name: Check Lua syntax
-        run: luac5.4 -p ./*.lua lib/*.lua scripts/*.lua
+        run: luac5.4 -p ./*.lua scripts/*.lua
 
       - name: Check shared command params
-        run: lua5.4 scripts/check_shared_params.lua ./*.lua
+        # Only the command files, not the shared lib_*.lua modules.
+        run: lua5.4 scripts/check_shared_params.lua $(ls ./*.lua | grep -v '^./lib_')

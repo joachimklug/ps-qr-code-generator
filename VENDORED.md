@@ -1,6 +1,6 @@
 # Vendored code
 
-## `qrencode.lua`
+## `lib_qrencode.lua`
 
 - **Upstream:** [speedata/luaqrcode](https://github.com/speedata/luaqrcode)
 - **Commit:** `5a9c34bc04d5113048df8528af72ef31d25b7300`

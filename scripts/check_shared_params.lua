@@ -1,8 +1,8 @@
 -- Checks that every QR command declares the same shared dimension params.
 -- PrusaSlicer reads each command's info table before require is available, so the shared
--- params cannot live in lib/ and are copied into every command file instead.
+-- params cannot live in a shared lib_ file and are copied into every command file instead.
 --
--- Usage from the repository root: lua5.4 scripts/check_shared_params.lua ./*.lua
+-- Usage from the repository root: lua5.4 scripts/check_shared_params.lua $(ls ./*.lua | grep -v '^./lib_')
 
 -- PrusaSlicer also loads .lua files in subfolders while discovering plugins. It passes no
 -- command-line arguments, so stop quietly there.

@@ -1,4 +1,4 @@
--- Builds the keychain tab that lib/utils.lua resolve_keychain_tab lays out.
+-- Builds the keychain tab that lib_utils.lua resolve_keychain_tab lays out.
 -- The tab is as thick as the base plate, so it stays below the raised squares and below the
 -- color change layer. The hole is a negative volume because the API has no boolean subtraction.
 

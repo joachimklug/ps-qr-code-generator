@@ -1,5 +1,5 @@
 -- PrusaSlicer provides require at execution time and resolves paths from the command file.
--- lib/qrencode.lua is vendored from speedata/luaqrcode. See lib/VENDORED.md.
+-- lib_qrencode.lua is vendored from speedata/luaqrcode. See VENDORED.md.
 
 -- Returns the smallest nozzle diameter of the selected printer, or nil if it is unknown.
 -- This is a best-effort check, so API errors never block generating the plate.
@@ -23,7 +23,7 @@ local function find_smallest_nozzle_diameter()
 end
 
 local function encode(payload, encoding_error)
-    local encoder = require("lib/qrencode")
+    local encoder = require("lib_qrencode")
     local ran, encoded, matrix = pcall(encoder.qrcode, payload)
     if ran and encoded then
         return matrix
@@ -73,8 +73,8 @@ local function read_tool_count(bed)
 end
 
 local function add_qr_plate(payload, dimensions, encoding_error)
-    local qr_geometry = require("lib/qr_geometry")
-    local utils = require("lib/utils")
+    local qr_geometry = require("lib_qr_geometry")
+    local utils = require("lib_utils")
 
     local spec = utils.validate_dimensions(dimensions)
     local matrix = encode(payload, encoding_error)
@@ -91,7 +91,7 @@ local function add_qr_plate(payload, dimensions, encoding_error)
     local tab_volumes = {}
     local tab = utils.resolve_keychain_tab(spec, layout)
     if tab then
-        tab_volumes = require("lib/keychain").make_tab_volumes(tab, spec.base_height, spec.pattern_height)
+        tab_volumes = require("lib_keychain").make_tab_volumes(tab, spec.base_height, spec.pattern_height)
     end
 
     -- Check the two-color mode before adding anything, so a problem leaves the bed unchanged.

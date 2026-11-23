@@ -59,7 +59,7 @@ local function wrap(text)
 end
 
 -- Errors raised with error(message, 0) are messages for the user. Anything else, such as
--- "lib/utils.lua:12: attempt to index a nil value", is a bug in the plugin.
+-- "lib_utils.lua:12: attempt to index a nil value", is a bug in the plugin.
 local function describe(err)
     local message = tostring(err)
     if type(err) ~= "string" or message:match("^[^\n]-%.lua:%d+: ") then

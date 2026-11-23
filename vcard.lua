@@ -127,10 +127,10 @@ local function generate(opts)
         error(VCARD_SIZE_ERROR, 0)
     end
 
-    require("lib/qr_plate").add_qr_plate(payload, opts, "Could not encode the contact details as a QR code.")
+    require("lib_qr_plate").add_qr_plate(payload, opts, "Could not encode the contact details as a QR code.")
 end
 
--- PrusaSlicer does not show errors from plugin commands, so lib/error_plate.lua shows them on the bed.
+-- PrusaSlicer does not show errors from plugin commands, so lib_error_plate.lua shows them on the bed.
 function execute(opts)
-    require("lib/error_plate").run(generate, opts)
+    require("lib_error_plate").run(generate, opts)
 end

@@ -28,17 +28,16 @@ jobs:
             exit 1
           fi
 
-      # Every Lua file at the root is a command, and lib/ holds the shared code.
+      # The bundle is flat: the command files and the shared lib_*.lua files sit at the root,
+      # because Marketplace installs of bundles with a lib/ subfolder failed integrity checks.
       # Editor files, docs, and scripts/ stay out of the signed bundle.
-      # LICENSE ships as LICENSE.txt: bundles may only contain allowed file types, and
-      # PrusaSlicer rejects a Marketplace install whose bundle has a file without one.
+      # LICENSE ships as LICENSE.txt: bundles may only contain allowed file types.
       - name: Stage plugin bundle
         run: |
           bundle="$RUNNER_TEMP/plugin-bundle"
-          mkdir -p "$bundle/lib"
+          mkdir -p "$bundle"
           cp manifest.json ./*.lua "$bundle/"
           cp LICENSE "$bundle/LICENSE.txt"
-          cp lib/*.lua "$bundle/lib/"
 
       # Allowed file types from https://plugin-marketplace.prusa3d.com/docs/bundle
       - name: Check bundle file types

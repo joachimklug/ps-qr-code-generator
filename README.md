@@ -68,7 +68,7 @@ If an input is invalid, for example a Wi-Fi password that’s too short, the plu
 
 ## How it’s organized
 
-Each QR command has a Lua file at the bundle root for its inputs and the data it encodes. The shared code lives in `lib/`. The commands use `lib/qr_plate.lua` to build the plate with `lib/qrencode.lua` for encoding, `lib/qr_geometry.lua` for the raised pattern, `lib/keychain.lua` for the optional keychain tab, and `lib/utils.lua` for dimension checks and layout. Each command runs through `lib/error_plate.lua`, which turns a failed check into an error plate on the bed. `lib/qrencode.lua` is vendored. [`lib/VENDORED.md`](lib/VENDORED.md) records its source and local changes.
+Each QR command has a Lua file at the bundle root for its inputs and the data it encodes. The shared code sits next to them in files that start with `lib_`. The bundle has no subfolders, because Marketplace installs of the earlier layout with a `lib/` folder failed. The commands use `lib_qr_plate.lua` to build the plate with `lib_qrencode.lua` for encoding, `lib_qr_geometry.lua` for the raised pattern, `lib_keychain.lua` for the optional keychain tab, and `lib_utils.lua` for dimension checks and layout. Each command runs through `lib_error_plate.lua`, which turns a failed check into an error plate on the bed. `lib_qrencode.lua` is vendored. [`VENDORED.md`](VENDORED.md) records its source and local changes.
 
 The shared dimension params are copied into every command file because PrusaSlicer reads `info` before `require` is available. The **Check** workflow runs `scripts/check_shared_params.lua` to keep them identical and checks the syntax of every Lua file. The release workflow runs the same checks and stops if the release tag doesn’t match the `manifest.json` version.
 
